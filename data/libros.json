@@ -1,0 +1,4 @@
+[
+  { "id": 1, "titulo": "El Quijote", "autor": "Cervantes", "stock": 5, "categoria": "Clásico" },
+  { "id": 2, "titulo": "Node.js Avanzado", "autor": "Daniel Valenti", "stock": 2, "categoria": "Programación" }
+]
