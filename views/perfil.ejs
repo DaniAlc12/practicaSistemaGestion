@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de usuario</title>
+</head>
+<body>
+    <h1>Bienvenido al perfil de usuario</h1>
+    <h3>Usuario: <%= user.username %></h3>
+    <p>Email: <%= user.email %></p>
+    <p>Contraseña: <%= user.password %></p>
+    <ul>
+        <% if(user.librosAlquilados.length > 0) { %>
+            <% user.librosAlquilados.forEach(libro => { %>
+                <li><%= libro %></li>
+            <% }); %>
+        <% } else { %>
+            <li>No tienes libros alquilados</li>
+        <% } %>
+    </ul>
+    <p><a href="/">Volver al inicio</a></p>
+</body>
+</html>

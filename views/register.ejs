@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de registro</title>
+</head>
+<body>
+    <h1>Registro de usuarios</h1>
+    <form action="/register" method="POST">
+
+        <label>Nombre de usuario:
+            <input type="text" name="username" value="<%= username || '' %>" required><br><br>
+        </label>
+
+        <label>Contraseña:
+            <input type="password" name="password" value="<%= password || '' %>" required><br><br>
+        </label>
+
+        <label>Correo electrónico:
+            <input type="email" name="email" value="<%= email || '' %>" required><br><br>
+        </label>
+
+        <button type="submit">Registrarse</button>
+        <a href="/">Volver al inicio</a>
+    </form>
+</body>
+</html>
