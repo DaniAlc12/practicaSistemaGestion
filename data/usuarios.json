@@ -3,6 +3,14 @@
     "username": "Daniel",
     "password": "123456789",
     "email": "danialcaniz12@gmail.com",
-    "librosAlquilados": []
+    "librosAlquilados": [],
+    "role": "invitado"
+  },
+  {
+    "username": "admin",
+    "password": "adminadmin",
+    "email": "admin@gmail.com",
+    "librosAlquilados": [],
+    "role": "admin"
   }
 ]

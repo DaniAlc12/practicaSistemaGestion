@@ -19,6 +19,12 @@
             <li>No tienes libros alquilados</li>
         <% } %>
     </ul>
+    <br>
+    <% if(user.role === "admin") { %>
+        <p>Rol del usuario: <%= role %></p>
+        <a href="/crearAdmin"><p>Crear nuevo admin</p></a>
+        <a href="/añadirLibro"><p>Añadir nuevo libro</p></a>
+    <% } %>
     <p><a href="/">Volver al inicio</a></p>
 </body>
 </html>

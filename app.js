@@ -77,10 +77,58 @@ app.post("/register", async (req, res) => {
   res.render("resultadoRegister",{
         username,
         password,
-        email
+        email,
+        role: "invitado"
     });
 
-    const nuevoUsuario = new Usuario(username, password, email, []);
+    const nuevoUsuario = new Usuario(username, password, email, [] , "invitado");
+    registrarUsuario(nuevoUsuario);
+    console.log("Usuario registrado:", nuevoUsuario);
+});
+
+//Registro de admin
+app.get("/crearAdmin", (req, res) => {
+    res.render("crearAdmin", {
+        username:"",
+        password:"",
+        email:"",
+        role:""
+    });
+});
+
+app.post("/crearAdmin", async (req, res) => {
+
+  const username = req.body.username;
+  const password = req.body.password;
+  const email = req.body.email;
+  const role = req.body.role;
+
+  let errores = [];
+
+  if(!username || username.trim().length < 2){
+      errores.push("El nombre de usuario debe tener al menos 2 caracteres.");
+  }
+  if(!password || password.length < 6){
+      errores.push("La contraseña debe tener al menos 6 caracteres.");
+  }
+  if(!email){
+      errores.push("Debe haber un correo electrónico válido.");
+  }
+
+  if(errores.length){
+    return res
+        .status(400)
+        .render("crearAdmin", {username,email,password,role,errores});
+  }
+
+  res.render("resultadoRegister",{
+        username,
+        password,
+        email,
+        role
+    });
+
+    const nuevoUsuario = new Usuario(username, password, email, [] ,role);
     registrarUsuario(nuevoUsuario);
     console.log("Usuario registrado:", nuevoUsuario);
 });
@@ -121,8 +169,10 @@ function requiereAuth(req, res, next){
 
 app.get("/perfil", requiereAuth, (req ,res) => {
     const user = req.session.usuario;
+    const role = req.session.usuario.role;
     res.render("perfil", {
-        user
+        user,
+        role
     });
 });
 
