@@ -68,26 +68,23 @@ app.post("/register", async (req, res) => {
       errores.push("Debe haber un correo electrónico válido.");
   }
 
-  if(errores.length){
-    return res
-        .status(400)
-        .render("register", {username,email,password,errores});
-  }
-
-  res.render("resultadoRegister",{
-        username,
-        password,
-        email,
-        role: "invitado"
-    });
+  if(errores.length > 0){
+        return res.status(400).render("register", { username, password, email, role, errores });
+    }
 
     const nuevoUsuario = new Usuario(username, password, email, [] , "invitado");
-    registrarUsuario(nuevoUsuario);
-    console.log("Usuario registrado:", nuevoUsuario);
+    const resultado = await registrarUsuario(nuevoUsuario);
+    if (!resultado.success) {
+        return res.status(400).render("register", { 
+            username, email, password, 
+            errores: [resultado.message] 
+        });
+    }
+    res.render("resultadoRegister", { username, password, email, role: "invitado" });
 });
 
 //Registro de admin
-app.get("/crearAdmin", (req, res) => {
+app.get("/crearAdmin",requiereAuth,requiereAdmin, (req, res) => {
     res.render("crearAdmin", {
         username:"",
         password:"",
@@ -96,7 +93,7 @@ app.get("/crearAdmin", (req, res) => {
     });
 });
 
-app.post("/crearAdmin", async (req, res) => {
+app.post("/crearAdmin",requiereAuth,requiereAdmin, async (req, res) => {
 
   const username = req.body.username;
   const password = req.body.password;
@@ -115,11 +112,9 @@ app.post("/crearAdmin", async (req, res) => {
       errores.push("Debe haber un correo electrónico válido.");
   }
 
-  if(errores.length){
-    return res
-        .status(400)
-        .render("crearAdmin", {username,email,password,role,errores});
-  }
+  if(errores.length > 0){
+        return res.status(400).render("crearAdmin", { username, password, email, role, errores });
+    }
 
   res.render("resultadoRegister",{
         username,
@@ -129,8 +124,12 @@ app.post("/crearAdmin", async (req, res) => {
     });
 
     const nuevoUsuario = new Usuario(username, password, email, [] ,role);
-    registrarUsuario(nuevoUsuario);
+    const resultado = await registrarUsuario(nuevoUsuario);
     console.log("Usuario registrado:", nuevoUsuario);
+    if (!resultado.success) {
+        errores.push(resultado.message);
+        return res.status(400).render("crearAdmin", { username, password, email, role, errores });
+    }
 });
 
 //Login de usuarios
@@ -161,10 +160,73 @@ app.post("/login", async (req, res) => {
     
 });
 
+//Añadir libros (solo para admin)
+const Libro = require("./models/Libro");
+const { addLibro } = require("./funciones");
+
+app.get("/addLibro",requiereAuth,requiereAdmin, (req, res) => {
+    res.render("addLibro", {
+        id:"",
+        titulo:"",
+        autor:"",
+        stock:"",
+        categoria:""
+    });
+
+
+});
+
+app.post("/addLibro",requiereAuth,requiereAdmin, async (req, res) => {
+
+  const id = req.body.id;
+  const titulo = req.body.titulo;
+  const autor = req.body.autor;
+  const stock = req.body.stock;
+  const categoria = req.body.categoria;
+
+
+  let errores = [];
+
+  if(!id){
+      errores.push("Debe haber un ID válido.");
+  }
+  if(!titulo || titulo.trim().length < 2){
+      errores.push("El título debe tener al menos 2 caracteres.");
+  }
+  if(!autor || autor.trim().length < 2){
+      errores.push("El autor debe tener al menos 2 caracteres.");
+  }
+  if(!stock || stock < 0){
+      errores.push("El stock debe ser un número positivo.");
+  }
+  if(!categoria || categoria.trim().length < 2){
+      errores.push("La categoría debe tener al menos 2 caracteres.");
+  }
+
+  if(errores.length > 0){
+        return res.status(400).render("addLibro", { id, titulo, autor, stock, categoria, errores });
+    }
+
+    const nuevoLibro = new Libro(id, titulo, autor, stock, categoria);
+    const resultado = await addLibro(nuevoLibro);
+    console.log("Libro añadido:", nuevoLibro);
+    if (!resultado.success) {
+        errores.push(resultado.message);
+        return res.status(400).render("addLibro", { id, titulo, autor, stock, categoria, errores });
+    }
+    
+    res.redirect("/catalogo");
+
+});
 //Middleware de autenticación
 function requiereAuth(req, res, next){
     if(req.session.usuario) return next();
     res.redirect("/login");
+}
+
+function requiereAdmin(req, res, next){
+    if(req.session.usuario && req.session.usuario.role === "admin") return next();
+    res.status(403).send("Acceso denegado. Solo administradores pueden acceder a esta página.");
 }
 
 app.get("/perfil", requiereAuth, (req ,res) => {

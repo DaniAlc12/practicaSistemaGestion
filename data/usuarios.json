@@ -12,5 +12,12 @@
     "email": "admin@gmail.com",
     "librosAlquilados": [],
     "role": "admin"
+  },
+  {
+    "username": "admin2",
+    "password": "adminadmin2",
+    "email": "a@a.com",
+    "librosAlquilados": [],
+    "role": "admin"
   }
 ]

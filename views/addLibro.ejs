@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Libro</title>
+</head>
+<body>
+    <% if(typeof errores !== 'undefined' && errores.length > 0) { %>
+    <div style="background-color: #ffcccc; padding: 10px; border: 1px solid red; border-radius: 5px; margin-bottom: 20px;">
+        <p style="color: red; font-weight: bold;">No se pudo añadir el libro:</p>
+        <ul>
+            <% errores.forEach(error => { %>
+                <li style="color: red;"><%= error %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
+    <h1>Añadir nuevo libro</h1>
+    <form action="/addLibro" method="POST">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" required><br><br>
+
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" required><br><br>
+
+        <label for="autor">Autor:</label>
+        <input type="text" id="autor" name="autor" required><br><br>
+
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" name="stock" required><br><br>
+
+        <label for="categoria">Género:</label>
+        <input type="text" id="categoria" name="categoria" required><br><br>
+
+        <button type="submit">Añadir Libro</button>
+</body>
+</html>
